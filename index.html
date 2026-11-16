@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل بيانات الطلاب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 border border-slate-100">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-slate-800">تسجيل بيانات الطلاب</h1>
+            <p class="text-sm text-slate-500 mt-1">يرجى إدخال البيانات بدقة وفقاً للأوراق الرسمية</p>
+        </div>
+
+        <form id="regForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">الاسم رباعي <span class="text-red-500">*</span></label>
+                <input type="text" id="fullName" required placeholder="مثال: أحمد محمد محمود علي" 
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">الرقم القومي (14 رقماً) <span class="text-red-500">*</span></label>
+                <input type="text" id="nationalId" maxlength="14" required placeholder="رقم المدونة في البطاقة" 
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">رقم الموبايل (واتساب) <span class="text-red-500">*</span></label>
+                <input type="tel" id="phone" maxlength="11" required placeholder="010xxxxxxxx" 
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">البريد الإلكتروني <span class="text-red-500">*</span></label>
+                <input type="email" id="email" required placeholder="example@domain.com" 
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+            </div>
+
+            <button type="submit" id="submitBtn" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition duration-200 shadow-lg shadow-blue-500/20 text-sm">
+                حفظ وتسجيل البيانات
+            </button>
+        </form>
+
+        <div id="loading" class="hidden text-center mt-4 text-blue-600 font-medium text-sm">جاري حفظ البيانات...</div>
+        <div id="successMsg" class="hidden text-center mt-4 bg-green-50 text-green-700 p-3 rounded-xl text-sm font-medium">تم تسجيل البيانات بنجاح! شكراً لك.</div>
+        <div id="errorMsg" class="hidden text-center mt-4 bg-red-50 text-red-700 p-3 rounded-xl text-sm font-medium">حدث خطأ أثناء الحفظ، يرجى المحاولة مرة أخرى.</div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbysZgLTkRIB6qrL8Pvw9-A5bI0zN4vPG3ie5NOZUJ6SHpcvBaE2n89i1bD3g2bqTYMqsA/exec";
+
+        const form = document.getElementById('regForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const successMsg = document.getElementById('successMsg');
+        const errorMsg = document.getElementById('errorMsg');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            successMsg.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+            loading.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            const data = {
+                fullName: document.getElementById('fullName').value,
+                nationalId: document.getElementById('nationalId').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value
+            };
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                loading.classList.add('hidden');
+                successMsg.classList.remove('hidden');
+                form.reset();
+                submitBtn.disabled = false;
+            })
+            .catch(() => {
+                loading.classList.add('hidden');
+                errorMsg.classList.remove('hidden');
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
